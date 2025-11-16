@@ -66,6 +66,16 @@ namespace Lab04
             }
         }
 
+        public interface IPrintable
+        {
+            public abstract void Print();
+        }
+        public interface IBorrowable
+        {
+            public abstract void Borrow();
+            public abstract void Return();
+            public abstract void IsAvailable();
+        }
         public interface IBarCodeGenerator
         {
             public abstract string GenerateBarCode();
@@ -77,6 +87,8 @@ namespace Lab04
             public int Id { get; set; }
             public string Publisher { get; set; }
             public string Title { get; set; }
+
+            public bool Avilable { get; set; } = true;
 
             public virtual string GenerateBarCode()
             {
@@ -104,7 +116,7 @@ namespace Lab04
             }
         }
 
-        public class  Journal : Item
+        public class  Journal : Item, IBorrowable
         {
             public int Number { get; set;}
             public Journal() : base()
@@ -115,6 +127,32 @@ namespace Lab04
             public Journal(string title, int id, string publisher, DateTime dateOfIssue, int number) : base(dateOfIssue, id, publisher, title)
             {
                 Number = number;
+            }
+
+            
+
+            public void Borrow()
+            {
+                Avilable = false;
+                Console.WriteLine($"Journal {Title} borrowed.");
+            }
+
+            public void Return()
+            {
+                Avilable = true;
+                Console.WriteLine($"Journal {Title} returned.");
+            }
+
+            public void IsAvailable()
+            {
+                if (Avilable)
+                {
+                    Console.WriteLine($"Journal {Title} is available.");
+                }
+                else
+                {
+                    Console.WriteLine($"Journal {Title} is not available.");
+                }
             }
 
             public override string GenerateBarCode()
@@ -128,7 +166,7 @@ namespace Lab04
             }
         }
 
-        public class Book : Item
+        public class Book : Item, IBorrowable, IPrintable
         {
             public List<Author> Authors { get; set; }
             public int PageCount { get; set; }
@@ -142,6 +180,36 @@ namespace Lab04
                 Authors = authors;
                 this.PageCount = pageCount;
             }
+
+            public void Print()
+            {
+                Console.WriteLine($"Printing Book: {Title}");
+                Console.WriteLine($"printing will use {PageCount} pages");
+            }
+            public void Borrow()
+            {
+                Avilable = false;
+                Console.WriteLine($"Book {Title} borrowed.");
+            }
+
+            public void Return()
+            {
+                Avilable = true;
+                Console.WriteLine($"Book {Title} returned.");
+            }
+
+            public void IsAvailable()
+            {
+                if (Avilable)
+                {
+                    Console.WriteLine($"Book {Title} is available.");
+                }
+                else
+                {
+                    Console.WriteLine($"Book {Title} is not available.");
+                }
+            }
+
 
             public void AddAuthor(Author author)
             {
@@ -474,6 +542,14 @@ namespace Lab04
             );
             if (groupedByNationality is not null) foreach (var e in groupedByNationality)
                     Console.WriteLine(e);
+            Console.WriteLine("-----------------------------------------------------------");
+            Console.WriteLine("Testowanie metod wlasnych");
+            Console.WriteLine("-----------------------------------------------------------");
+            ((Book)i1).Print();
+            ((Book)i4).Borrow();
+            ((Book)i4).IsAvailable();
+            ((Book)i4).Return();
+            ((Book)i4).IsAvailable();
         }
     }
 }
